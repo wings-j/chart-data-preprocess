@@ -1,29 +1,20 @@
-import type { Vector1, Vector2 } from '../../types/vector-array';
-
 /**
  * Consecutive Duplicate Compress
  * @description Compresses the input array by removing consecutive duplicate entries while preserving order.
- * @type [T] Origin Type
+ * @type [T] Data Type
  * @param [array] Array
- * @return Downsampled Array
+ * @param [vGetter] Value Getter
+ * @return Compressed Array
  */
-function consecutiveDuplicateCompress<T = any>(array: T[], identifiers?: ((item: T) => any)[]): T[] {
+function consecutiveDuplicateCompress<T = any>(array: T[], vGetter?: (item: T) => any): T[] {
   if (array.length > 2) {
     let temp = [array[0]!];
     let last = temp[0]!;
     for (let i = 1; i < array.length - 1; i++) {
       let current = array[i]!;
 
-      if (identifiers?.length) {
-        let unique = false;
-        for (let a of identifiers) {
-          if (a(current) !== a(last)) {
-            unique = true;
-
-            break;
-          }
-        }
-        if (unique) {
+      if (vGetter) {
+        if (vGetter(current) !== vGetter(last)) {
           temp.push(current);
           last = current;
         }
@@ -41,16 +32,16 @@ function consecutiveDuplicateCompress<T = any>(array: T[], identifiers?: ((item:
     return Array.from(array);
   }
 }
-
 /**
  * Distance Threshold Compress
  * @description Compresses the input vector array by removing points whose x-distance to the previous kept point is within the given unit threshold.
  * @type [T] Data Type
- * @param [array] Data Array
+ * @param [array] Array
+ * @param [xGetter] X Getter
  * @param [unit] Unit Size
- * @returns Downsampled Array
+ * @returns Compressed Array
  */
-function distanceThresholdCompress<T extends Vector1 = any>(array: T[], unit: number): T[] {
+function distanceThresholdCompress<T = any>(array: T[], xGetter: (item: T) => number, unit: number): T[] {
   if (array.length > 2) {
     let temp = Array.from(array) as (T | undefined)[];
 
@@ -69,7 +60,7 @@ function distanceThresholdCompress<T extends Vector1 = any>(array: T[], unit: nu
     for (let i = 1; i < array.length - 1; i++) {
       let next = array[i + 1];
       if (next) {
-        if (next.x - previous.x <= unit) {
+        if (xGetter(next) - xGetter(previous) <= unit) {
           temp[i] = undefined;
         }
         previous = getPrevious(i)!;
@@ -81,16 +72,15 @@ function distanceThresholdCompress<T extends Vector1 = any>(array: T[], unit: nu
     return Array.from(array);
   }
 }
-
 /**
  * Largest Triangle Three Buckets Compress
  * @description Downsamples the input vector array to the requested length using the largest-triangle-three-buckets (LTTB) algorithm.
- * @type [T] Origin Type
- * @param [array] Origin Array
+ * @type [T] Data Type
+ * @param [array] Array
  * @param [length] Target Length
- * @return Downsampled Array
+ * @return Compressed Array
  */
-function largestTriangleThreeBucketsCompress<T extends Vector2 = any>(array: T[], length: number): T[] {
+function largestTriangleThreeBucketsCompress<T = any>(array: T[], xGetter: (item: T) => number, yGetter: (item: T) => number, length: number): T[] {
   if (array.length <= length || array.length <= 3) {
     return Array.from(array);
   } else {
@@ -112,22 +102,25 @@ function largestTriangleThreeBucketsCompress<T extends Vector2 = any>(array: T[]
 
       if (nextBucketLength > 0) {
         for (let j = nextBucketRange[0]; j < nextBucketRange[1]; j++) {
-          nextBucketAverage.x += array[j]!.x;
-          nextBucketAverage.y += array[j]!.y;
+          nextBucketAverage.x += xGetter(array[j]!);
+          nextBucketAverage.y += yGetter(array[j]!);
         }
         nextBucketAverage.x /= nextBucketLength; // Compute average x.
         nextBucketAverage.y /= nextBucketLength; // Compute average y.
       } else {
         let fallback = array[nextBucketRange[0]] ?? array[array.length - 1] ?? currentPoint; // Fallback to the next available point or current point.
-        nextBucketAverage.x = fallback.x;
-        nextBucketAverage.y = fallback.y;
+        nextBucketAverage.x = xGetter(fallback);
+        nextBucketAverage.y = yGetter(fallback);
       }
 
       let currentBucketRange: [number, number] = [Math.floor(i * batch) + 1, Math.floor((i + 1) * batch) + 1]; // Current bucket indices.
       for (let j = currentBucketRange[0]; j < currentBucketRange[1]; j++) {
         let candidate = array[j]!; // Candidate point.
         let area =
-          Math.abs((currentPoint.x - nextBucketAverage.x) * (candidate.y - currentPoint.y) - (currentPoint.x - candidate.x) * (nextBucketAverage.y - currentPoint.y)) * 0.5; // Triangle area.
+          Math.abs(
+            (xGetter(currentPoint) - nextBucketAverage.x) * (yGetter(candidate) - yGetter(currentPoint)) -
+              (xGetter(currentPoint) - xGetter(candidate)) * (nextBucketAverage.y - yGetter(currentPoint))
+          ) * 0.5; // Triangle area.
         if (area > maxArea) {
           maxArea = area;
           maxAreaPoint = candidate;

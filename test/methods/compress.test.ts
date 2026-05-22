@@ -12,7 +12,7 @@ describe('consecutiveDuplicateCompress', () => {
         { x: 5, y: 2, value: 'e' },
         { x: 6, y: 2, value: 'f' }
       ],
-      [a => a.y]
+      a => a.y
     );
 
     expect(r).toEqual([
@@ -32,6 +32,7 @@ describe('distanceThresholdCompress', () => {
         { x: 6, y: 0, value: 'd' },
         { x: 9, y: 0, value: 'e' }
       ],
+      a => a.x,
       2
     );
 
@@ -60,6 +61,8 @@ describe('largestTriangleThreeBucketsCompress', () => {
         { x: 11, y: 1, value: 'k' },
         { x: 12, y: 2, value: 'l' }
       ],
+      a => a.x,
+      a => a.y,
       3
     );
 
