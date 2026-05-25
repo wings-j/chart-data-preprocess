@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { max, mean, min, minMax, sum } from '../src';
+import { max, mean, median, min, minMax, sum } from '../src';
 
 describe('min', () => {
   it('$', () => {
@@ -34,5 +34,10 @@ describe('mean', () => {
     let r = mean([1, 2, 3]);
 
     expect(r).toBe(2);
+  });
+});
+describe('median', () => {
+  it('$', () => {
+    expect(median([4, 1, 3, 2, 0, 10])).toBe(2.5);
   });
 });

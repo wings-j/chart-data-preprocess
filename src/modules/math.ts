@@ -50,5 +50,24 @@ function sum(array: number[]): number {
 function mean(array: number[]): number {
   return sum(array) / array.length;
 }
+/**
+ * Median
+ * @description Calculate the median of an array of numbers.
+ * @param [array] Array of numbers
+ * @return Median value
+ */
+function median(array: number[]): number {
+  if (array.length <= 1) {
+    return array[0]!;
+  } else {
+    let sorted = Array.from(array).sort((a, b) => a - b);
+    let middle = Math.floor(sorted.length / 2);
+    if (sorted.length % 2 === 0) {
+      return (sorted[middle - 1]! + sorted[middle]!) / 2;
+    } else {
+      return sorted[middle]!;
+    }
+  }
+}
 
-export { max, mean, min, minMax, sum };
+export { max, mean, median, min, minMax, sum };
