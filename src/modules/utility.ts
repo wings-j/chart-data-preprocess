@@ -19,4 +19,20 @@ function parse(value: any): number {
   }
 }
 
-export { parse };
+/**
+ * Format
+ * @param [value] Value
+ * @param [fraction] Fraction
+ * @param [trim] Trim
+ * @return String
+ */
+function format(value: number, fraction: number, trim = false): string {
+  let result = value.toFixed(fraction);
+  if (trim) {
+    result = result.replace(/\.0+$/, '');
+  }
+
+  return result;
+}
+
+export { format, parse };

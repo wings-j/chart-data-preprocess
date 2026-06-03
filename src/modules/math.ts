@@ -1,5 +1,6 @@
 /**
  * Min
+ * @description Find the minimum value in an array.
  * @param [array] Array
  * @return Value
  */
@@ -8,6 +9,7 @@ function min(array: number[]): number {
 }
 /**
  * Max
+ * @description Find the maximum value in an array.
  * @param [array] Array
  * @return Value
  */
@@ -16,6 +18,7 @@ function max(array: number[]): number {
 }
 /**
  * Min Max
+ * @description Find both the minimum and maximum values in an array.
  * @param [array] Array
  * @return Min Value and Max Value
  */
@@ -36,6 +39,7 @@ function minMax(array: number[]): [number, number] {
 }
 /**
  * Sum
+ * @description Calculate the sum of all values in an array.
  * @param [array] Array
  * @return Value
  */
@@ -44,6 +48,7 @@ function sum(array: number[]): number {
 }
 /**
  * Mean
+ * @description Calculate the average (mean) of all values in an array.
  * @param [array] Array
  * @return Value
  */

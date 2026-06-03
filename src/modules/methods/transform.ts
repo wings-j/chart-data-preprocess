@@ -2,7 +2,7 @@ import { sum } from '../math';
 
 /**
  * Ratio
- * @description Calculate ratio
+ * @description Calculate ratio.
  * @type [T] Data Type
  * @param [array] Array
  * @param [xGetter] X Getter
